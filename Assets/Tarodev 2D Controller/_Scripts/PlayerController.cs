@@ -42,12 +42,40 @@ namespace TarodevController {
             CalculateJump(); // Possibly overrides vertical
 
             MoveCharacter(); // Actually perform the axis movement
+            Sprint();
+            checkGrounded();
         }
 
+        private void checkGrounded()
+        {
+            if (Grounded)
+            {
+                _usedDoublejump = false;
+            }
+        }
 
-        #region Gather Input
+        private void Sprint()
+        {
+            
+            if (UnityEngine.Input.GetKeyDown(KeyCode.LeftShift))
+            {
+                if (canSprint)
+                {
+                    _moveClamp = 20;
+                    _acceleration = 120;
+                }
+            }
+            else if (UnityEngine.Input.GetKeyUp(KeyCode.LeftShift))
+            {
+                _moveClamp = 13;
+                _acceleration = 90;
+            }
+            
+        }
 
-        private void GatherInput() {
+            #region Gather Input
+
+            private void GatherInput() {
             Input = new FrameInput {
                 JumpDown = UnityEngine.Input.GetButtonDown("Jump"),
                 JumpUp = UnityEngine.Input.GetButtonUp("Jump"),
@@ -150,6 +178,7 @@ namespace TarodevController {
         [SerializeField] private float _moveClamp = 13;
         [SerializeField] private float _deAcceleration = 60f;
         [SerializeField] private float _apexBonus = 2;
+        [SerializeField] public bool canSprint = false;
 
         private void CalculateWalk() {
             if (Input.X != 0) {
@@ -209,6 +238,8 @@ namespace TarodevController {
         [SerializeField] private float _coyoteTimeThreshold = 0.1f;
         [SerializeField] private float _jumpBuffer = 0.1f;
         [SerializeField] private float _jumpEndEarlyGravityModifier = 3;
+        [SerializeField] public bool canDoublejump = false;
+        [SerializeField] private bool _usedDoublejump = false;
         private bool _coyoteUsable;
         private bool _endedJumpEarly = true;
         private float _apexPoint; // Becomes 1 at the apex of a jump
@@ -236,9 +267,26 @@ namespace TarodevController {
                 _timeLeftGrounded = float.MinValue;
                 JumpingThisFrame = true;
             }
-            else {
+            else if (Input.JumpDown)
+            {
+                if (canDoublejump)
+                {
+                    if (!_usedDoublejump)
+                    {
+                        _usedDoublejump = true;
+                        _currentVerticalSpeed = _jumpHeight;
+                        _endedJumpEarly = false;
+                        _coyoteUsable = false;
+                        _timeLeftGrounded = float.MinValue;
+                        JumpingThisFrame = true;
+                    }
+                }
+            }
+            else
+            {
                 JumpingThisFrame = false;
             }
+
 
             // End the jump early if button released
             if (!_colDown && Input.JumpUp && !_endedJumpEarly && Velocity.y > 0) {
