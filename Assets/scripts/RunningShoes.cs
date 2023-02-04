@@ -13,5 +13,9 @@ public class RunningShoes : MonoBehaviour
             GameObject.Find("Player").GetComponent<PlayerController>().canSprint = true;
             Destroy(gameObject);
         }
+        else
+        {
+            Debug.Log("colliding at least");
+        }
     }
 }
