@@ -6,6 +6,7 @@ using UnityEngine;
 public class hurtbox : MonoBehaviour
 {
     public GameObject Player;
+    public bool isRightSide;
     private bool isKnocked = false;
     private float px;
     private float py;
@@ -19,9 +20,18 @@ public class hurtbox : MonoBehaviour
     {
         if (isKnocked)
         {
-            px = Player.transform.position.x;
-            py = Player.transform.position.y;
-            Player.transform.position = new Vector3(-.25f + px, .25f + py, 0);
+            if (!isRightSide)
+            {
+                px = Player.transform.position.x;
+                py = Player.transform.position.y;
+                Player.transform.position = new Vector3(-.25f + px, .25f + py, 0);
+            }
+            else
+            {
+                px = Player.transform.position.x;
+                py = Player.transform.position.y;
+                Player.transform.position = new Vector3(.25f + px, .25f + py, 0);
+            }
         }
     }
 
@@ -35,7 +45,7 @@ public class hurtbox : MonoBehaviour
         if (target.tag == "Player")
         {
             isKnocked = true;
-            Invoke("cancelKnock", 0.1f);
+            Invoke("cancelKnock", 0.2f);
         }
     }
 }

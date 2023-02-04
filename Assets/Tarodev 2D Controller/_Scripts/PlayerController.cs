@@ -19,7 +19,6 @@ namespace TarodevController {
         public Vector3 RawMovement { get; private set; }
         public bool Grounded => _colDown;
         public bool canWallgrab;
-        private bool WallgrabCooldown;
         private bool lastGrabRight;
         private bool canWallJump;
 
@@ -70,7 +69,6 @@ namespace TarodevController {
         private void cancelWallgrab()
         {
             _fallClamp = -40;
-            WallgrabCooldown = true;
             canWallJump = false;
         }
 
@@ -113,7 +111,6 @@ namespace TarodevController {
             if (Grounded)
             {
                 _usedDoublejump = false;
-                WallgrabCooldown = false;
             }
         }
 
