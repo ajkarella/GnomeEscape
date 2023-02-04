@@ -101,14 +101,6 @@ namespace TarodevController {
                             canWallJump = true;
 
                         }
-                        else if (!WallgrabCooldown)
-                        {
-                            CancelInvoke();
-                            Invoke("cancelWallgrab", 0.25f);
-                            _fallClamp = 0;
-                            canWallJump = true;
-
-                        }
                     }
 
                 }
