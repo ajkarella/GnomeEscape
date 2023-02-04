@@ -18,6 +18,10 @@ namespace TarodevController {
         public bool LandingThisFrame { get; private set; }
         public Vector3 RawMovement { get; private set; }
         public bool Grounded => _colDown;
+        public bool canWallgrab;
+        private bool WallgrabCooldown;
+        private bool lastGrabRight;
+        private bool canWallJump;
 
         private Vector3 _lastPosition;
         private float _currentHorizontalSpeed, _currentVerticalSpeed;
@@ -44,6 +48,72 @@ namespace TarodevController {
             MoveCharacter(); // Actually perform the axis movement
             Sprint();
             checkGrounded();
+            checkWallgrab();
+            checkWallJump();
+        }
+
+        private void checkWallJump()
+        {
+            if (canWallJump)
+            {
+                if (Input.JumpDown)
+                {
+                    _currentVerticalSpeed = _jumpHeight;
+                    _endedJumpEarly = false;
+                    _coyoteUsable = false;
+                    _timeLeftGrounded = float.MinValue;
+                    JumpingThisFrame = true;
+                }
+            }
+        }
+
+        private void cancelWallgrab()
+        {
+            _fallClamp = -40;
+            WallgrabCooldown = true;
+            canWallJump = false;
+        }
+
+        private void checkWallgrab()
+        {
+            if (canWallgrab)
+            {
+                if (!Grounded)
+                {
+                    if (_colRight || _colLeft)
+                    {
+                        if (_colRight && !lastGrabRight)
+                        {
+                            CancelInvoke();
+                            Invoke("cancelWallgrab", 0.25f);
+                            _fallClamp = 0;
+                            lastGrabRight = true;
+                            canWallJump = true;
+
+
+                        }
+                        else if (_colLeft && lastGrabRight)
+                        {
+                            CancelInvoke();
+                            Invoke("cancelWallgrab", 0.25f);
+                            _fallClamp = 0;
+                            lastGrabRight = false;
+                            canWallJump = true;
+
+                        }
+                        else if (!WallgrabCooldown)
+                        {
+                            CancelInvoke();
+                            Invoke("cancelWallgrab", 0.25f);
+                            _fallClamp = 0;
+                            canWallJump = true;
+
+                        }
+                    }
+
+                }
+                
+            }
         }
 
         private void checkGrounded()
@@ -51,6 +121,7 @@ namespace TarodevController {
             if (Grounded)
             {
                 _usedDoublejump = false;
+                WallgrabCooldown = false;
             }
         }
 

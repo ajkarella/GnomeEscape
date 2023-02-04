@@ -3,14 +3,13 @@ using System.Collections.Generic;
 using TarodevController;
 using UnityEngine;
 
-public class RunningShoes : MonoBehaviour
+public class Wallgrab : MonoBehaviour
 {
-
     void OnTriggerEnter2D(Collider2D target)
     {
         if (target.tag == "Player")
         {
-            GameObject.Find("Player").GetComponent<PlayerController>().canSprint = true;
+            GameObject.Find("Player").GetComponent<PlayerController>().canWallgrab = true;
             Destroy(gameObject);
         }
     }
