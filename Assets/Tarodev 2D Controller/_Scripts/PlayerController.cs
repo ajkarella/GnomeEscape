@@ -55,9 +55,9 @@ namespace TarodevController {
         {
             if (canWallJump)
             {
-                if (!isWebbed)
+                if (Input.JumpDown)
                 {
-                    if (Input.JumpDown)
+                        if (!isWebbed)
                     {
                         _currentVerticalSpeed = _jumpHeight;
                         _endedJumpEarly = false;
@@ -325,9 +325,10 @@ namespace TarodevController {
 
         private void CalculateJump() {
             // Jump if: grounded or within coyote threshold || sufficient jump buffer
-            if (!isWebbed)
+
+            if (Input.JumpDown && CanUseCoyote || HasBufferedJump)
             {
-                if (Input.JumpDown && CanUseCoyote || HasBufferedJump)
+                if (!isWebbed)
                 {
                     _currentVerticalSpeed = _jumpHeight;
                     _endedJumpEarly = false;
@@ -338,19 +339,16 @@ namespace TarodevController {
             }
             else if (Input.JumpDown)
             {
-                if (!isWebbed)
+                if (canDoublejump && !isWebbed)
                 {
-                    if (canDoublejump)
+                    if (!_usedDoublejump)
                     {
-                        if (!_usedDoublejump)
-                        {
-                            _usedDoublejump = true;
-                            _currentVerticalSpeed = _jumpHeight;
-                            _endedJumpEarly = false;
-                            _coyoteUsable = false;
-                            _timeLeftGrounded = float.MinValue;
-                            JumpingThisFrame = true;
-                        }
+                        _usedDoublejump = true;
+                        _currentVerticalSpeed = _jumpHeight;
+                        _endedJumpEarly = false;
+                        _coyoteUsable = false;
+                        _timeLeftGrounded = float.MinValue;
+                        JumpingThisFrame = true;
                     }
                 }
             }
