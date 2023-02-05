@@ -23,6 +23,8 @@ namespace TarodevController {
         private bool _playerGrounded;
         private ParticleSystem.MinMaxGradient _currentGradient;
         private Vector2 _movement;
+        public bool facingRight = true;
+        public Transform gnomeTrans;
 
         void Awake() => _player = GetComponentInParent<IPlayerController>();
 
@@ -79,6 +81,32 @@ namespace TarodevController {
             }
 
             _movement = _player.RawMovement; // Previous frame movement is more valuable
+
+            if (Input.GetKey(KeyCode.A) || Input.GetKey(KeyCode.D))
+            {
+                _anim.SetBool("isMoving", true);
+            }
+            else
+            {
+                _anim.SetBool("isMoving", false);
+            }
+
+            if (Input.GetKeyDown(KeyCode.D))
+            {
+                if (gnomeTrans.localScale.x < 0)
+                {
+                    gnomeTrans.localScale = new Vector3(gnomeTrans.localScale.x * -1, gnomeTrans.localScale.y, gnomeTrans.localScale.z);
+                }
+                
+            }
+            if (Input.GetKeyDown(KeyCode.A))
+            {
+                if (gnomeTrans.localScale.x > 0)
+                {
+                    gnomeTrans.localScale = new Vector3(gnomeTrans.localScale.x * -1, gnomeTrans.localScale.y, gnomeTrans.localScale.z);
+                }
+            }
+
         }
 
         private void OnDisable() {
