@@ -55,13 +55,16 @@ namespace TarodevController {
         {
             if (canWallJump)
             {
-                if (Input.JumpDown)
+                if (!isWebbed)
                 {
-                    _currentVerticalSpeed = _jumpHeight;
-                    _endedJumpEarly = false;
-                    _coyoteUsable = false;
-                    _timeLeftGrounded = float.MinValue;
-                    JumpingThisFrame = true;
+                    if (Input.JumpDown)
+                    {
+                        _currentVerticalSpeed = _jumpHeight;
+                        _endedJumpEarly = false;
+                        _coyoteUsable = false;
+                        _timeLeftGrounded = float.MinValue;
+                        JumpingThisFrame = true;
+                    }
                 }
             }
         }
@@ -157,7 +160,8 @@ namespace TarodevController {
         [SerializeField] [Range(0.1f, 0.3f)] private float _rayBuffer = 0.1f; // Prevents side detectors hitting the ground
 
         private RayRange _raysUp, _raysRight, _raysDown, _raysLeft;
-        private bool _colUp, _colRight, _colDown, _colLeft;
+        private bool _colUp, _colRight, _colLeft;
+        public bool _colDown;
 
         private float _timeLeftGrounded;
 
@@ -235,7 +239,7 @@ namespace TarodevController {
         #region Walk
 
         [Header("WALKING")] [SerializeField] private float _acceleration = 90;
-        [SerializeField] private float _moveClamp = 13;
+        [SerializeField] public float _moveClamp = 13;
         [SerializeField] private float _deAcceleration = 60f;
         [SerializeField] private float _apexBonus = 2;
         [SerializeField] public bool canSprint = false;
@@ -306,6 +310,7 @@ namespace TarodevController {
         private float _lastJumpPressed;
         private bool CanUseCoyote => _coyoteUsable && !_colDown && _timeLeftGrounded + _coyoteTimeThreshold > Time.time;
         private bool HasBufferedJump => _colDown && _lastJumpPressed + _jumpBuffer > Time.time;
+        public bool isWebbed = false;
 
         private void CalculateJumpApex() {
             if (!_colDown) {
@@ -320,25 +325,32 @@ namespace TarodevController {
 
         private void CalculateJump() {
             // Jump if: grounded or within coyote threshold || sufficient jump buffer
-            if (Input.JumpDown && CanUseCoyote || HasBufferedJump) {
-                _currentVerticalSpeed = _jumpHeight;
-                _endedJumpEarly = false;
-                _coyoteUsable = false;
-                _timeLeftGrounded = float.MinValue;
-                JumpingThisFrame = true;
+            if (!isWebbed)
+            {
+                if (Input.JumpDown && CanUseCoyote || HasBufferedJump)
+                {
+                    _currentVerticalSpeed = _jumpHeight;
+                    _endedJumpEarly = false;
+                    _coyoteUsable = false;
+                    _timeLeftGrounded = float.MinValue;
+                    JumpingThisFrame = true;
+                }
             }
             else if (Input.JumpDown)
             {
-                if (canDoublejump)
+                if (!isWebbed)
                 {
-                    if (!_usedDoublejump)
+                    if (canDoublejump)
                     {
-                        _usedDoublejump = true;
-                        _currentVerticalSpeed = _jumpHeight;
-                        _endedJumpEarly = false;
-                        _coyoteUsable = false;
-                        _timeLeftGrounded = float.MinValue;
-                        JumpingThisFrame = true;
+                        if (!_usedDoublejump)
+                        {
+                            _usedDoublejump = true;
+                            _currentVerticalSpeed = _jumpHeight;
+                            _endedJumpEarly = false;
+                            _coyoteUsable = false;
+                            _timeLeftGrounded = float.MinValue;
+                            JumpingThisFrame = true;
+                        }
                     }
                 }
             }

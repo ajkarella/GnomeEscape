@@ -11,7 +11,7 @@ public class hurtbox : MonoBehaviour
     private float px;
     private float py;
 
-    private void Update()
+    private void FixedUpdate()
     {
         knockBack();
     }
@@ -24,13 +24,13 @@ public class hurtbox : MonoBehaviour
             {
                 px = Player.transform.position.x;
                 py = Player.transform.position.y;
-                Player.transform.position = new Vector3(-.25f + px, .25f + py, 0);
+                Player.transform.position = new Vector3(-.5f + px, .5f + py, 0);
             }
             else
             {
                 px = Player.transform.position.x;
                 py = Player.transform.position.y;
-                Player.transform.position = new Vector3(.25f + px, .25f + py, 0);
+                Player.transform.position = new Vector3(.5f + px, .5f + py, 0);
             }
         }
     }
